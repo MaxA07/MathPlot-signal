@@ -6,11 +6,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationTool
 from matplotlib.figure import Figure
 import numpy as np
 
-
+# создаем класс для виджета в котором будет график
 class MatplotlibWidget(QWidget):
     def __init__(self, parent=None):
         super(MatplotlibWidget, self).__init__(parent)
-        self.figure = Figure()
+        self.figure = Figure()                              # создаем экземпляр фигуры в котором будет график
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.axis = self.figure.add_subplot(111)
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
@@ -32,7 +32,7 @@ class MainWidget(QWidget, qt_widget.Ui_Form):
         self.init_widget()
         self.pushButton.clicked.connect(self.plot_widget)
         self.pushButton_2.clicked.connect(self.clear_form)
-        self.pushButton_3.clicked.connect(self.close_window)
+        self.pushButton_3.clicked.connect(self.close)
 
     def center(self):
         qr = self.frameGeometry()
@@ -57,10 +57,10 @@ class MainWidget(QWidget, qt_widget.Ui_Form):
         self.layoutvertical.addWidget(self.matplotlibwidget)
 
     def plot_widget(self):
-        frequency = 5;
+        frequency = self.get_text()
         self.matplotlibwidget.axis.clear()
-        t = np.arange(0, 3, 0.01)
-        y = np.sin(2*np.pi*frequency*t)
+        t = np.arange(0, 3, 0.001)
+        y = np.sin(2 * np.pi * frequency * t)
         self.matplotlibwidget.axis.plot(t, y)
         self.matplotlibwidget.canvas.draw()
 
@@ -68,8 +68,11 @@ class MainWidget(QWidget, qt_widget.Ui_Form):
         self.matplotlibwidget.axis.clear()
         self.matplotlibwidget.canvas.draw()
 
-    def close_window(self):
-        self.close()
+    def get_text(self):
+        frequency = self.lineEdit.text()
+        if frequency == '':
+            frequency = 5
+        return int(frequency)
 
 
 if __name__ == "__main__":
